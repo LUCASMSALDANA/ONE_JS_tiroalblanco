@@ -1,0 +1,100 @@
+<meta charset="utf-8">
+<canvas width="600" height="400"></canvas>
+<h2 id="score">Score : 0</h2>
+<button id="play">Comenzar</button>
+
+<script type="text/javascript">
+	var scoreTxt = document.getElementById("score");
+	var botonJuego = document.getElementById("play")
+	var pantalla = document.querySelector("canvas");
+	var pincel  = pantalla.getContext("2d");
+	var xDiana = 50;
+	var yDiana = 45;
+	var radio = 15;
+	var sentido = 1;
+	var score = 0;
+	var timer = 0;
+	var animar = false;
+	var play =false;
+
+	pantalla.onclick = disparo;
+	botonJuego.onclick = jugar;
+	setInterval(animacion,5);
+	
+	function jugar(){
+		scoreTxt.innerHTML = "Score : "+score;	
+		animar=true;
+		play=true
+	}
+
+	function animacion(){
+		if(animar){
+			timer+=5;
+			limpiarPantalla();
+			dibujarDiana(xDiana,yDiana,radio);
+			xDiana=xDiana+sentido;
+			if(xDiana==600){
+				xDiana = 0;
+				yDiana= Math.floor(Math.random()*400);
+				if(yDiana<radio+(radio*2)){yDiana+=(radio*2);}
+				if(yDiana>400-(radio+(radio*2))){yDiana-=(radio*2);} 
+			}
+			if (timer==5000){animar=false;}
+		}else if(play){
+				alert("Tiempo agotado. Su puntaje es de: "+score)
+				timer=0;
+				score=0;
+				animar=false;
+	 			xDiana = 50;
+	 			yDiana = 45;
+	 			play=false;
+	 			limpiarPantalla();
+
+		}
+	}
+
+	function limpiarPantalla(){
+		pincel.clearRect(0,0,600,400);
+	}
+
+	function dibujarDiana(){
+		dibujarCirculo(xDiana,yDiana,radio+(radio*2),"red");
+		dibujarCirculo(xDiana,yDiana,radio+radio,"white");
+		dibujarCirculo(xDiana,yDiana,radio,"red");
+	}
+	function dibujarCirculo(xDiana,yDiana,radio,color){
+		pincel.fillStyle = color;
+		pincel.beginPath();
+		pincel.arc(xDiana,yDiana,radio,0,2*Math.PI);
+		pincel.fill();
+	}
+
+	function disparo(evento){
+		xDisparo = evento.pageX - pantalla.offsetLeft;
+		yDisparo = evento.pageY - pantalla.offsetTop;
+		var dianaMenorValor= radio+radio*2;
+		var dianaMedioValor=radio*2
+		if( (xDisparo<xDiana+dianaMenorValor) &&
+			(xDisparo>xDiana-dianaMenorValor) &&
+			(yDisparo<yDiana+dianaMenorValor) &&
+			(yDisparo>yDiana-dianaMenorValor) )	{
+			score+=1;
+			if( (xDisparo<xDiana+dianaMedioValor) &&
+				(xDisparo>xDiana-dianaMedioValor) &&
+				(yDisparo<yDiana+dianaMedioValor) &&
+				(yDisparo>yDiana-dianaMedioValor) )		{
+				score+=2;
+				if( (xDisparo<xDiana+radio) &&
+					(xDisparo>xDiana-radio) &&
+					(yDisparo<yDiana+radio) &&
+					(yDisparo>yDiana-radio) )		{
+					score+=2;
+				}
+			}
+		scoreTxt.innerHTML = "Score : "+score;	
+
+		}
+	}
+
+
+</script>
